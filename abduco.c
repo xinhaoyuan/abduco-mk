@@ -599,18 +599,20 @@ int main(int argc, char *argv[]) {
 
                 char **new_argv = malloc(sizeof(char *) * (4 + argc));
                 new_argv[0] = "ssh";
-                new_argv[1] = "-t";
-                /* new_argv[2] will be set later */
+                new_argv[1] = (action == 'n' || action == 0) ? "-T" : "-t";
+                /* new_argv[2] will be set to the hostname later */
                 new_argv[2] = "";
+                int cur_arg = 3;
                 for (int i = 0; i < argc; ++ i) {
                     if (argv[i] == server.session_name) {
                         new_argv[2] = argv[i];
-                        new_argv[3 + i] = session_name;
+                        if (*session_name)
+                            new_argv[cur_arg ++] = session_name;
                     } else {
-                        new_argv[3 + i] = argv[i];
+                        new_argv[cur_arg ++] = argv[i];
                     }
                 }
-                new_argv[3 + argc] = NULL;
+                new_argv[cur_arg] = NULL;
                 return execvp("ssh", new_argv);
             }
         }
