@@ -618,7 +618,7 @@ int main(int argc, char *argv[]) {
 	if (!cmd) {
 		cmd = (char*[]){ getenv("ABDUCO_CMD"), NULL };
 		if (!cmd[0]) {
-                    if (getenv("DVTM_WINDOW_ID"))
+                    if (strncmp(getenv("TERM"), "dvtm", 4) == 0)
                         cmd[0] = getenv("SHELL");
                     else
 			cmd[0] = "dvtm";
