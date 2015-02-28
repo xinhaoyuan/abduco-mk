@@ -591,13 +591,41 @@ int main(int argc, char *argv[]) {
 		}
 	}
 
+        if (server.session_name) {
+            char *host_delim = strpbrk(server.session_name, ":");
+            if (host_delim) {
+                *host_delim = 0;
+                char *session_name = host_delim + 1;
+
+                char **new_argv = malloc(sizeof(char *) * (4 + argc));
+                new_argv[0] = "ssh";
+                new_argv[1] = "-t";
+                /* new_argv[2] will be set later */
+                new_argv[2] = "";
+                for (int i = 0; i < argc; ++ i) {
+                    if (argv[i] == server.session_name) {
+                        new_argv[2] = argv[i];
+                        new_argv[3 + i] = session_name;
+                    } else {
+                        new_argv[3 + i] = argv[i];
+                    }
+                }
+                new_argv[3 + argc] = NULL;
+                return execvp("ssh", new_argv);
+            }
+        }
+
 	if (!cmd) {
 		cmd = (char*[]){ getenv("ABDUCO_CMD"), NULL };
-		if (!cmd[0])
+		if (!cmd[0]) {
+                    if (getenv("DVTM_WINDOW_ID"))
+                        cmd[0] = getenv("SHELL");
+                    else
 			cmd[0] = "dvtm";
+                }
 	}
 
-	if (!action || !server.session_name)
+	if (!action || !server.session_name || !server.session_name[0])
 		usage();
 
 	if (tcgetattr(STDIN_FILENO, &orig_term) != -1) {
