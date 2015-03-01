@@ -616,6 +616,9 @@ int main(int argc, char *argv[]) {
                 return execvp("ssh", new_argv);
             }
         }
+        
+        if (!server.session_name || !server.session_name[0])
+            server.session_name = "_default_";
 
 	if (!cmd) {
 		cmd = (char*[]){ getenv("ABDUCO_CMD"), NULL };
@@ -627,7 +630,7 @@ int main(int argc, char *argv[]) {
                 }
 	}
 
-	if (!action || !server.session_name || !server.session_name[0])
+	if (!action)
 		usage();
 
 	if (tcgetattr(STDIN_FILENO, &orig_term) != -1) {
