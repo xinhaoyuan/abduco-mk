@@ -608,6 +608,7 @@ int main(int argc, char *argv[]) {
                         new_argv[2] = argv[i];
                         if (*session_name)
                             new_argv[cur_arg ++] = session_name;
+                        else new_argv[cur_arg ++] = DEFAULT_SESSION_NAME;
                     } else {
                         new_argv[cur_arg ++] = argv[i];
                     }
@@ -618,7 +619,7 @@ int main(int argc, char *argv[]) {
         }
         
         if (!server.session_name || !server.session_name[0])
-            server.session_name = "_default_";
+            server.session_name = DEFAULT_SESSION_NAME;
 
 	if (!cmd) {
 		cmd = (char*[]){ getenv("ABDUCO_CMD"), NULL };
